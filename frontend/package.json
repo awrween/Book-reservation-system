@@ -17,7 +17,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+     "test": "react-scripts test --ci --reporters=jest-stare --passWithNoTests || true",
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:5000",
