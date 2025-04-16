@@ -91,12 +91,12 @@ jobs:
 
             # Start backend using npm
             echo "Starting the backend app with npm..."
-            npm start &
+            npm start server
 
             # Frontend setup
             cd ../frontend
             npm install
-            npm run build
+            npm run 
 
             # Optional: Copy build files to Nginx directory (uncomment if using Nginx)
             # sudo cp -r build/* /var/www/html/
