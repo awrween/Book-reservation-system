@@ -60,10 +60,9 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.EC2_HOST }}     # Add this secret too
+          host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          key_format: base64                # ✅ VERY IMPORTANT
           port: 22
           script: |
             cd
@@ -74,6 +73,8 @@ jobs:
             cd ../frontend
             npm install
             npm run build
+      
+
       
             
 
