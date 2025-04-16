@@ -58,24 +58,22 @@ jobs:
         run: npm run build
 
       - name: Deploy to EC2
-        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT || '22' }}
+          host: ${{ secrets.EC2_HOST }}     # Add this secret too
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          key_format: base64                # ✅ VERY IMPORTANT
+          port: 22
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
+            cd
             git pull origin main
-
             cd backend
             npm install
             pm2 restart server || pm2 start server.js --name book-backend
-
             cd ../frontend
             npm install
             npm run build
-
+      
             
 
