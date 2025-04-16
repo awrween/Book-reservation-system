@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-test:
@@ -15,9 +18,9 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --eval 'db.stats()'"
-          --health-interval 10s
-          --health-timeout 5s
+          --health-cmd "mongosh --eval 'db.stats()'" 
+          --health-interval 10s 
+          --health-timeout 5s 
           --health-retries 5
 
     env:
@@ -37,7 +40,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: ./backend
-        run: npm ci
+        run: npm install
 
       - name: Run backend tests
         working-directory: ./backend
@@ -45,7 +48,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ./frontend
-        run: npm ci
+        run: npm install
 
       - name: Run frontend tests
         working-directory: ./frontend
@@ -63,7 +66,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -71,29 +74,32 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "📁 Switching to project directory..."
+            echo "📦 Switching to project folder..."
             cd /home/ubuntu/Book-reservation-system
 
             echo "🔄 Pulling latest changes..."
             git reset --hard
             git pull origin main
 
-            echo "🧹 Cleaning old dependencies..."
-            rm -rf backend/node_modules frontend/node_modules
+            echo "🚮 Cleaning backend..."
+            cd backend
+            rm -rf node_modules package-lock.json
 
             echo "🚀 Installing backend..."
-            cd backend
-            npm ci
+            npm install
 
-            echo "🛑 Stopping old backend (if running)..."
+            echo "🛑 Stopping old backend..."
             pkill -f "node server.js" || true
 
-            echo "🎯 Starting backend in background..."
+            echo "🎯 Starting backend..."
             nohup npm start > server.log 2>&1 &
 
-            echo "💡 Installing frontend..."
+            echo "🚮 Cleaning frontend..."
             cd ../frontend
-            npm ci
+            rm -rf node_modules package-lock.json
+
+            echo "💡 Installing frontend..."
+            npm install
 
             echo "⚒️  Building frontend..."
             npm run build
