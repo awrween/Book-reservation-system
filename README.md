@@ -1,4 +1,4 @@
-# BookReserve
+# BookReserves
 
 A modern book reservation system built with React.js, Node.js, and MongoDB. Manage book reservations, and user accounts efficiently.  
 
