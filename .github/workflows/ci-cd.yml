@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies for Backend
         run: |
           cd backend
-          npm ci  # Use npm ci for clean install in CI/CD
+          npm install  # Use npm install to install the backend dependencies
 
       # Step 4: Start Backend Server
       - name: Run Backend Server
@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies for Frontend
         run: |
           cd frontend
-          npm ci  # Clean install for frontend dependencies
+          npm install  # Install frontend dependencies
 
       # Step 6: Build frontend for production
       - name: Build Frontend
@@ -77,7 +77,7 @@ jobs:
       - name: Install dependencies for Backend
         run: |
           cd backend
-          npm ci
+          npm install  # Install backend dependencies
 
       # Run backend tests
       - name: Run Backend Tests
@@ -89,13 +89,14 @@ jobs:
       - name: Install dependencies for Frontend
         run: |
           cd frontend
-          npm ci
+          npm install  # Install frontend dependencies
 
       # Run frontend tests
       - name: Run Frontend Tests
         run: |
           cd frontend
           npm test  # Replace with your frontend test command
+
 
 
             
