@@ -27,7 +27,7 @@ jobs:
       MONGO_URI: mongodb://localhost:27017/book-reservation
       JWT_SECRET: dummy_jwt_secret
       PORT: 5000
-      CI: false  # Avoid treating React warnings as errors
+      CI: false
 
     steps:
       - name: Checkout code
@@ -60,13 +60,13 @@ jobs:
 
   deploy-to-ec2:
     runs-on: ubuntu-latest
-    needs: build-and-test  # Ensure deployment only happens after the tests are successful
+    needs: build-and-test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -74,36 +74,31 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
+            echo "📦 Switching to project folder..."
             cd /home/ubuntu/Book-reservation-system
 
-            # Pull the latest changes
+            echo "🔄 Pulling latest changes..."
             git reset --hard
             git pull origin main
 
-            # Backend setup
+            echo "🚀 Installing backend..."
             cd backend
             npm install
 
-            # Stop the currently running app if it is using npm
-            # First find the PID of the running node process and kill it
-            echo "Stopping the current app if it's running..."
-            ps aux | grep 'node' | grep 'server.js' | awk '{print $2}' | xargs kill -9
+            echo "🛑 Stopping old backend..."
+            pkill -f "node server.js" || true
 
-            # Start backend using npm
-            echo "Starting the backend app with npm..."
-            npm start server
+            echo "🎯 Starting backend..."
+            nohup npm start > server.log 2>&1 &
 
-            # Frontend setup
+            echo "💡 Installing frontend..."
             cd ../frontend
             npm install
-            npm run 
 
-            # Optional: Copy build files to Nginx directory (uncomment if using Nginx)
-            # sudo cp -r build/* /var/www/html/
+            echo "⚒️  Building frontend..."
+            npm run build
 
-            echo "✅ Deployment finished!"
-
-
-      
+            echo "✅ Deployment complete!"
+     
             
 
