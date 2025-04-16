@@ -104,7 +104,7 @@ jobs:
             echo "⚒️  Building frontend..."
             npm run build
 
-            echo "✅ Deployment complete!"
+            echo "✅ Deployment complete"
 
 
 
