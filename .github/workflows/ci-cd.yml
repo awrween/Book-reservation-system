@@ -84,13 +84,14 @@ jobs:
             cd backend
             npm install
 
-            # Restart backend with PM2
-            if pm2 list | grep -q backend; then
-              pm2 restart backend
-            else
-              pm2 start server.js --name backend
-              pm2 save
-            fi
+            # Stop the currently running app if it is using npm
+            # First find the PID of the running node process and kill it
+            echo "Stopping the current app if it's running..."
+            ps aux | grep 'node' | grep 'server.js' | awk '{print $2}' | xargs kill -9
+
+            # Start backend using npm
+            echo "Starting the backend app with npm..."
+            npm start &
 
             # Frontend setup
             cd ../frontend
