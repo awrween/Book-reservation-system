@@ -1,5 +1,4 @@
-
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -56,24 +55,3 @@ jobs:
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
-
-      - name: Deploy to EC2
-        if: github.ref == 'refs/heads/main'
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT || '22' }}
-          script: |
-            cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin main
-
-            cd backend
-            npm install
-            pm2 restart server || pm2 start server.js --name book-backend
-
-            cd ../frontend
-            npm install
-            npm run build
-
